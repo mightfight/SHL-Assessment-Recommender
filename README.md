@@ -88,3 +88,36 @@ Visit http://localhost:8000 in your browser.
 python evaluation/evaluate.py         # Mean Recall@10 on train set
 python evaluation/generate_predictions.py  # predictions.csv for submission
 ```
+
+## Deployment Notes
+
+The application can be deployed to any Python-capable host. Two common free-tier
+options are **Render** and **Heroku**. To avoid build/runtime errors, especially
+on Render which currently uses Python 3.14 by default, take the following steps:
+
+1. **Pin Python version**
+   * Add a `runtime.txt` with `python-3.12.2` or set the environment variable
+     `PYTHON_VERSION=3.12.2` on Render.
+   * This prevents issues compiling newer packages such as `pydantic-core`.
+
+2. **Upgrade build tools**
+   * Use a build command like:
+     ```bash
+     pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
+     ```
+   * This ensures wheels are built correctly.
+
+3. **ChromaDB/Pydantic fix**
+   * The requirements already pin `chromadb>=0.5.5` and `pydantic>=1.10,<2.1` to
+     avoid the type-inference bug.
+   * On Render, add an environment variable:
+     `CHROMA_SERVER_NOFILE=65535` (or any integer) to bypass Pydantic inference.
+
+4. **Environment variables**
+   * `GEMINI_API_KEY` (required)
+   * `CHROMA_TELEMETRY_OFF=True` (optional)
+   * `CHROMA_SERVER_NOFILE` (see above)
+   * `PYTHON_VERSION`/`runtime.txt` as noted.
+
+Once deployed, verify the health check and `/recommend` endpoints work at the
+public URL, and the front-end should be accessible at the root path.
