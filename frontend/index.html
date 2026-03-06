@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SHL Assessment Recommender</title>
+  <meta name="description" content="AI-powered SHL assessment recommendation engine. Enter a job description or query to find the most relevant psychometric assessments."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+  <!-- Background decoration -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="page-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="13" stroke="url(#grad1)" stroke-width="2"/>
+            <path d="M8 14l4 4 8-8" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="grad1" x1="0" y1="0" x2="28" y2="28">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text">SHL <span class="logo-highlight">Recommend</span></span>
+      </div>
+      <div class="header-badge">AI-Powered · RAG · Gemini</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-eyebrow">🎯 Intelligent Assessment Matching</div>
+      <h1 class="hero-title">
+        Find the right SHL assessment<br/>
+        <span class="gradient-text">in seconds, not hours</span>
+      </h1>
+      <p class="hero-sub">
+        Paste a job description, enter a hiring query, or provide a JD URL.<br/>
+        Our RAG engine powered by Gemini AI will recommend the most relevant assessments.
+      </p>
+    </section>
+
+    <!-- Search Card -->
+    <div class="search-card glass">
+      <div class="search-tabs">
+        <button class="tab active" data-tab="text" id="tab-text">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Job Description / Query
+        </button>
+        <button class="tab" data-tab="url" id="tab-url">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          JD URL
+        </button>
+      </div>
+
+      <div class="input-area">
+        <div id="input-text-panel" class="input-panel active">
+          <textarea
+            id="query-input"
+            placeholder="e.g. I am hiring Java developers who can also collaborate effectively with business teams. Looking for assessments completable in 40 minutes..."
+            rows="5"
+          ></textarea>
+        </div>
+        <div id="input-url-panel" class="input-panel">
+          <input type="url" id="url-input" placeholder="https://example.com/job-description" />
+        </div>
+      </div>
+
+      <div class="search-footer">
+        <div class="sample-queries">
+          <span class="samples-label">Try:</span>
+          <button class="sample-chip" data-q="I am hiring Java developers who can also collaborate effectively with my business teams.">Java Dev + Collaboration</button>
+          <button class="sample-chip" data-q="Looking to hire mid-level professionals who are proficient in Python, SQL and JavaScript.">Python, SQL, JS</button>
+          <button class="sample-chip" data-q="I am hiring for an analyst and want to screen applications using Cognitive and personality tests.">Analyst — Cognitive & Personality</button>
+        </div>
+        <button class="btn-recommend" id="recommend-btn">
+          <span class="btn-text">Get Recommendations</span>
+          <span class="btn-spinner" id="btn-spinner" style="display:none">
+            <svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          </span>
+          <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 14 0M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div class="error-banner" id="error-banner" style="display:none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <span id="error-text"></span>
+    </div>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results-section" style="display:none">
+      <div class="results-header">
+        <div>
+          <h2 class="results-title">Recommended Assessments</h2>
+          <p class="results-sub" id="results-count"></p>
+        </div>
+        <div class="results-meta" id="results-meta"></div>
+      </div>
+
+      <!-- Summary chips -->
+      <div class="type-summary" id="type-summary"></div>
+
+      <!-- Results Table -->
+      <div class="table-container glass">
+        <table class="results-table" id="results-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Assessment Name</th>
+              <th>Test Type</th>
+              <th>Duration</th>
+              <th>Remote</th>
+              <th>Adaptive</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Built with RAG + Gemini AI · SHL Assessment Catalog · 377+ Individual Tests</p>
+    </footer>
+
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
