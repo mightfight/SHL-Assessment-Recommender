@@ -113,7 +113,18 @@ on Render which currently uses Python 3.14 by default, take the following steps:
    * On Render, add an environment variable:
      `CHROMA_SERVER_NOFILE=65535` (or any integer) to bypass Pydantic inference.
 
-4. **Environment variables**
+5. **Keep‑alive / Ping Script**
+   * Free-tier hosts will still sleep after inactivity. To mitigate this, run a
+     simple ping script from another machine (a small VPS, local PC, or GitHub
+     Action) that hits `/health` every 20‑30 minutes. An example utility is
+     provided at `backend/pinger.py`:
+     ```bash
+     python backend/pinger.py https://your-app-url/health 25
+     ```
+   * This external "crawler" is not part of the deployed service; it merely
+     delays the dyno/container shutdown by generating periodic traffic.
+
+6. **Environment variables**
    * `GEMINI_API_KEY` (required)
    * `CHROMA_TELEMETRY_OFF=True` (optional)
    * `CHROMA_SERVER_NOFILE` (see above)
